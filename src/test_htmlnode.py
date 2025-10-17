@@ -1,18 +1,54 @@
 import unittest
-
 from htmlnode import HTMLNode
 
+
 class TestHTMLNode(unittest.TestCase):
-    def test_eq(self):
-        node = HTMLNode("p", "Test Text", None, None)
-        node2 = HTMLNode("p", "Test Text")
-        self.assertEqual(node, node2)
-    
-    def test_props_to_html(self):
-        node = HTMLNode(props={"href": "test.com", "target": "_blank"})
-        props_string = node.props_to_html()
-        expected_string = ' href="test.com" target="_blank"'
-        self.assertEqual(props_string, expected_string)
-        
+    def test_to_html_props(self):
+        node = HTMLNode(
+            "div",
+            "Hello, world!",
+            None,
+            {"class": "greeting", "href": "https://boot.dev"},
+        )
+        self.assertEqual(
+            node.props_to_html(),
+            ' class="greeting" href="https://boot.dev"',
+        )
+
+    def test_values(self):
+        node = HTMLNode(
+            "div",
+            "I wish I could read",
+        )
+        self.assertEqual(
+            node.tag,
+            "div",
+        )
+        self.assertEqual(
+            node.value,
+            "I wish I could read",
+        )
+        self.assertEqual(
+            node.children,
+            None,
+        )
+        self.assertEqual(
+            node.props,
+            None,
+        )
+
+    def test_repr(self):
+        node = HTMLNode(
+            "p",
+            "What a strange world",
+            None,
+            {"class": "primary"},
+        )
+        self.assertEqual(
+            node.__repr__(),
+            "HTMLNode(p, What a strange world, children: None, {'class': 'primary'})",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
