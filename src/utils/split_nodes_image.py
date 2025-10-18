@@ -9,21 +9,29 @@ def split_nodes_image(nodes):
             out.append(node)
             continue
 
-        images = extract_markdown_images(node.text)
-        unprocessed_text = node.text
-        for i in range(len(images)):
-            image = images[i]
-            image_text = image_tuple_to_markdown(image)
-            split_node = unprocessed_text.split(image_text, maxsplit=1)
-            if split_node[0] != "":
-                out.append(TextNode(split_node[0], TextType.TEXT))
-            out.append(TextNode(image[0], TextType.IMAGE, image[1]))
-            if i == len(images) - 1 and split_node[1] != "":
-                out.append(TextNode(split_node[1], TextType.TEXT))
-            unprocessed_text = split_node[1]
+        text = node.text
+        images = extract_markdown_images(text)
+
+        if not images:
+            out.append(node)
+            continue
+
+        for alt_text, image_url in images:
+            markdown_text = f"![{alt_text}]({image_url})"
+            parts = text.split(markdown_text, 1)
+
+            if len(parts) != 2:
+                raise ValueError(
+                    "invalid markdown, image section not closed or mismatched"
+                )
+
+            if parts[0]:
+                out.append(TextNode(parts[0], TextType.TEXT))
+
+            out.append(TextNode(alt_text, TextType.IMAGE, image_url))
+            text = parts[1]
+
+        if text:
+            out.append(TextNode(text, TextType.TEXT))
 
     return out
-
-
-def image_tuple_to_markdown(tuple):
-    return f"![{tuple[0]}]({tuple[1]})"

@@ -9,21 +9,29 @@ def split_nodes_link(nodes):
             out.append(node)
             continue
 
-        links = extract_markdown_links(node.text)
-        unprocessed_text = node.text
-        for i in range(len(links)):
-            link = links[i]
-            link_text = link_tuple_to_markdown(link)
-            split_node = unprocessed_text.split(link_text, maxsplit=1)
-            if split_node[0] != "":
-                out.append(TextNode(split_node[0], TextType.TEXT))
-            out.append(TextNode(link[0], TextType.LINK, link[1]))
-            if i == len(links) - 1 and split_node[1] != "":
-                out.append(TextNode(split_node[1], TextType.TEXT))
-            unprocessed_text = split_node[1]
+        text = node.text
+        links = extract_markdown_links(text)
+
+        if not links:
+            out.append(node)
+            continue
+
+        for link_text, link_url in links:
+            markdown_text = f"[{link_text}]({link_url})"
+            parts = text.split(markdown_text, 1)
+
+            if len(parts) != 2:
+                raise ValueError(
+                    "invalid markdown, link section not closed or mismatched"
+                )
+
+            if parts[0]:
+                out.append(TextNode(parts[0], TextType.TEXT))
+
+            out.append(TextNode(link_text, TextType.LINK, link_url))
+            text = parts[1]
+
+        if text:
+            out.append(TextNode(text, TextType.TEXT))
 
     return out
-
-
-def link_tuple_to_markdown(tuple):
-    return f"[{tuple[0]}]({tuple[1]})"
