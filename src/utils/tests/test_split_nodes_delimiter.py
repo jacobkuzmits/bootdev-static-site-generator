@@ -51,7 +51,7 @@ class TestHTMLNode(unittest.TestCase):
 
 	def test_unmatched_bold(self):
 		node = TextNode("This is text with a **unmatched bold", TextType.TEXT)
-		with self.assertRaises(Exception):
+		with self.assertRaises(ValueError):
 			split_nodes_delimiter([node], "**", TextType.BOLD)
 
 if __name__ == "__main__":
