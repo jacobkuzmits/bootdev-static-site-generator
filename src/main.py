@@ -1,5 +1,6 @@
 import os
 import shutil
+from utils.generate_page import generate_page
 
 
 def copy_static_to_public():
@@ -13,6 +14,9 @@ def copy_static_to_public():
 
     # copy static/ into public/
     copy_directory("static", "public")
+
+    # generate index
+    generate_page("content/index.md", "template.html", "public/index.html")
 
 
 def copy_directory(src, target):
