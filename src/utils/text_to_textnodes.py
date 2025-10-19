@@ -5,7 +5,7 @@ from utils.split_nodes_image import split_nodes_image
 
 
 def text_to_textnodes(text):
-    text_node = TextNode(text, TextType.TEXT)
+    text_node = TextNode(text.strip().replace("\n", " "), TextType.TEXT)
     with_images = split_nodes_image([text_node])
     with_links = split_nodes_link(with_images)
     with_bolds = split_nodes_delimiter(with_links, "**", TextType.BOLD)
