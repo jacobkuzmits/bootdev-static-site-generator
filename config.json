@@ -1,0 +1,6 @@
+{
+  "basepath": {
+    "local": "/",
+    "production": "/bootdev-static-site-generator/"
+  }
+}

@@ -1,6 +1,7 @@
 import os
 import sys
 import shutil
+import json
 from utils.generate_page import generate_page
 from utils.generate_pages_recursive import generate_pages_recursive
 
@@ -44,11 +45,26 @@ def copy_directory(src, target):
             copy_directory(item_path, target_dir_path)
 
 
+def load_config():
+    config_path = os.path.join(".", "config.json")
+    try:
+        with open(config_path, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Warning: {config_path} not found, using default values")
+        return {"basepath": {"local": "/", "production": "/"}}
+
+
 def main():
-    if len(sys.argv) < 2:
-        basepath = "/"
+    config = load_config()
+
+    # Check if environment is specified (local or production)
+    if len(sys.argv) >= 2 and sys.argv[1] in ["local", "production"]:
+        env = sys.argv[1]
+        basepath = config["basepath"][env]
     else:
-        basepath = sys.argv[1]
+        # Default to local
+        basepath = config["basepath"]["local"]
 
     print(f"using basepath: {basepath}")
 
