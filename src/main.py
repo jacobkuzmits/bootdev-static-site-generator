@@ -1,6 +1,7 @@
 import os
 import shutil
 from utils.generate_page import generate_page
+from utils.generate_pages_recursive import generate_pages_recursive
 
 
 def copy_static_to_public():
@@ -15,8 +16,8 @@ def copy_static_to_public():
     # copy static/ into public/
     copy_directory("static", "public")
 
-    # generate index
-    generate_page("content/index.md", "template.html", "public/index.html")
+    # generate all pages from markdown
+    generate_pages_recursive("content", "template.html", "public")
 
 
 def copy_directory(src, target):
