@@ -1,23 +1,29 @@
 import os
+import sys
 import shutil
 from utils.generate_page import generate_page
 from utils.generate_pages_recursive import generate_pages_recursive
 
 
-def copy_static_to_public():
+def copy_static_to_docs(basepath):
     # delete public/
-    if os.path.exists("public"):
-        shutil.rmtree("public")
-        print("Deleted public/")
+    if os.path.exists("docs"):
+        shutil.rmtree("docs")
+        print("Deleted docs/")
 
     # create public/
-    os.mkdir("public")
+    os.mkdir("docs")
 
     # copy static/ into public/
-    copy_directory("static", "public")
+    copy_directory("static", "docs")
 
     # generate all pages from markdown
-    generate_pages_recursive("content", "template.html", "public")
+    generate_pages_recursive(
+        os.path.join(".", "content"),
+        os.path.join(".", "template.html"),
+        os.path.join(".", "docs"),
+        basepath,
+    )
 
 
 def copy_directory(src, target):
@@ -39,7 +45,14 @@ def copy_directory(src, target):
 
 
 def main():
-    copy_static_to_public()
+    if len(sys.argv) < 2:
+        basepath = "/"
+    else:
+        basepath = sys.argv[1]
+
+    print(f"using basepath: {basepath}")
+
+    copy_static_to_docs(basepath)
 
 
 if __name__ == "__main__":
